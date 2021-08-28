@@ -1,0 +1,30 @@
+import java.io.Serializable;
+
+public class Mesaj implements Serializable{
+	    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 26042021L;
+		public String text;
+		public int [] x= new int[5];
+	    public Mesaj(String text, int[]x) {
+	        this.text = text;
+	        this.x=x;
+	    }
+		public String getText() {
+			return text;
+		}
+		public void setText(String text) {
+			this.text = text;
+		}
+		public int[] getCoord() {
+			return x;
+		}
+		public void setCoord(int[] x) {
+			this.x[0]=x[0];
+			this.x[1]=x[1];
+			this.x[2]=x[2];
+			this.x[3]=x[3];
+		}
+	    
+	}

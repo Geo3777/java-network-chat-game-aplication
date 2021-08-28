@@ -1,0 +1,75 @@
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.io.*;
+import java.net.*;
+
+public class Client 
+{
+	
+	public static int ct=3;
+	public static int [] k= new int[5];
+	public static String y = "ssshhhhhhhhhhh!!!!";
+	public static ObjectOutputStream data_output = null;
+	public static ObjectInputStream data_input = null;
+	public static BufferedReader buffered_reader = null;
+
+	public static void main(String[] args)
+	{
+		
+		new Joc().run();
+		new Joc().paintComponent(Joc.g2);
+		//initializam variabilele de tip net(Socket) si de tip io(DataInputStream, DataOutputStream, BufferedReader)
+		Socket socket = null;
+		
+		try
+		{
+			socket = new Socket("localhost", 5020);//conectam socketul la localhost(versiunea numerica) si la portul stabilit
+			OutputStream outputStream = socket.getOutputStream();
+			data_output = new ObjectOutputStream(outputStream);//outputul clientului
+			data_input = new ObjectInputStream(socket.getInputStream());//inputul clientului
+			buffered_reader = new BufferedReader(new InputStreamReader(System.in));//citeste caracterele de la input
+			Mesaj m= new Mesaj("aleluia",k);
+			String server_input = "", server_output = "";
+			try
+			{
+				while (!E_D.decriptare(server_output, y).equals("terminat"))//pana cand serverul nu spune stop
+				{
+					m.setCoord(Joc.x);
+					if(Joc.ok>1)
+					{
+						Joc.paintComponent(Joc.g2).setStroke(new BasicStroke(5));
+						Joc.g2.setColor(Color.blue);
+					    Joc.g2.drawLine(Joc.x[0], Joc.x[1], Joc.x[2], Joc.x[3]);
+					    Joc.ok=0;
+					    Joc.panel.revalidate();
+					    Joc.panel.repaint();
+					}
+					server_input=buffered_reader.readLine();//output-ul de la client va fi luat ca si input la server 
+					m.setText(E_D.criptare(server_input,y));
+					data_output.writeObject(m);//output-ul de la client va fi luat ca si input la s
+					data_output.flush();
+					
+				    m = (Mesaj) data_input.readObject();
+				    k=m.getCoord();
+					Joc.g2.setStroke(new BasicStroke(5));
+					Joc.g2.setColor(Color.red);
+				    Joc.g2.drawLine(k[0], k[1], k[2], k[3]);
+	        		Joc.panel.repaint();
+					server_output = m.getText();//output-ul de la server va fi luat ca si input la client
+					System.out.println("Serverul spune: " + E_D.decriptare(server_output, y));
+				}
+				
+			}
+			catch (ClassNotFoundException c) {
+		         System.out.println("Mesaj class not found");
+			}
+
+		}
+		catch (Exception exe)
+		{
+			exe.printStackTrace();
+		}
+		
+	}
+}
